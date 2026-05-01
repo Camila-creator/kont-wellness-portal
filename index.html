@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mi Portal | Kont Wellness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-100 flex justify-center items-center min-h-screen font-sans antialiased">
+
+    <main class="kont-app">
+        
+        <header class="kont-header">
+            <div class="kont-header-top">
+                <div class="kont-tenant-info">
+                    <div class="kont-tenant-logo" id="tenant-logo-box">
+                        <span id="tenant-initial">K</span>
+                        <img id="tenant-logo" src="" alt="Logo" class="hidden">
+                    </div>
+                    <div>
+                        <p class="kont-tenant-name" id="tenant-name">Kont Business</p>
+                        <p class="kont-tenant-category" id="tenant-category">Wellness Center</p>
+                    </div>
+                </div>
+                <button class="kont-btn-icon"><i class="bi bi-bell-fill"></i></button>
+            </div>
+            
+            <h1 class="kont-greeting">
+                Hola, <span id="client-name" class="kont-highlight">Cliente</span>
+            </h1>
+        </header>
+
+        <div class="kont-content">
+            
+            <section class="kont-card kont-plan-card">
+                <div class="kont-plan-info">
+                    <h2 class="kont-label">Tu Plan Actual</h2>
+                    <p id="plan-name" class="kont-title">Cargando Plan...</p>
+                    <div class="kont-badge mt-2">Vence: <span id="plan-expiry">--/--/----</span></div>
+                </div>
+                
+                <div class="kont-progress-ring">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" class="ring-bg"></circle>
+                        <circle id="progress-circle" cx="50" cy="50" r="40" class="ring-fill"></circle>
+                    </svg>
+                    <div class="kont-progress-text">
+                        <span id="progress-value">0</span>
+                        <span id="progress-unit">Left</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="action-section">
+                <div class="flex justify-between items-end mb-3 px-1">
+                    <h2 class="kont-label" id="action-title">Próxima Agenda</h2>
+                </div>
+                
+                <div class="kont-card kont-action-card" id="action-card">
+                    <div class="animate-pulse flex space-x-4">
+                        <div class="rounded-xl bg-slate-700 h-14 w-14"></div>
+                        <div class="flex-1 space-y-3 py-1">
+                            <div class="h-3 bg-slate-700 rounded w-3/4"></div>
+                            <div class="h-3 bg-slate-700 rounded w-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-6">
+                <h2 class="kont-label mb-3 px-1">Tu Cronograma</h2>
+                <div id="agenda-list" class="kont-agenda-list">
+                    </div>
+            </section>
+            
+        </div>
+
+        <footer class="kont-footer">
+            <p>Powered by <span>KONT</span></p>
+        </footer>
+
+    </main>
+
+    <script src="portal_wellness.js"></script>
+</body>
+</html>

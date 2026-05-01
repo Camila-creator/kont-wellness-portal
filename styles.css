@@ -1,0 +1,317 @@
+/* =========================================================
+   PORTAL WELLNESS — KONT
+   Optimizacion: Mobile-First
+   Paleta: Kont Official (Blue, Green, Dark)
+   ========================================================= */
+
+:root {
+    /* Kont Official Colors */
+    --kont-blue: #3b82f6;
+    --kont-green: #10b981;
+    --kont-green-dark: #059669;
+    --kont-dark: #0f172a;
+    --kont-gray-bg: #f8fafc;
+    --kont-border: #e2e8f0;
+}
+
+/* ── MOBILE FIRST BASE (App Wrapper) ── */
+.kont-app {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--kont-gray-bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── MEDIA QUERIES (TABLET / DESKTOP) ── */
+@media (min-width: 640px) {
+    .kont-app {
+        max-width: 420px;
+        min-height: auto;
+        height: 90vh;
+        border-radius: 30px;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.3);
+        border: 8px solid var(--kont-dark);
+    }
+}
+
+/* ── HEADER ── */
+.kont-header {
+    background: var(--kont-dark);
+    color: white;
+    padding: 30px 24px 40px 24px;
+    border-radius: 0 0 30px 30px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15);
+}
+
+.kont-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.kont-tenant-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.kont-tenant-logo {
+    width: 44px;
+    height: 44px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--kont-dark);
+    font-weight: 900;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+.kont-tenant-name {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.kont-tenant-category {
+    font-size: 10px;
+    color: var(--kont-green);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+.kont-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.kont-btn-icon:hover { background: rgba(255,255,255,0.2); }
+
+.kont-greeting {
+    font-size: 24px;
+    font-weight: 400;
+    color: #cbd5e1;
+}
+
+.kont-highlight {
+    font-weight: 900;
+    color: white;
+}
+
+/* ── CONTENT SCROLL ── */
+.kont-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 80px 20px;
+    margin-top: -20px;
+    position: relative;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Ocultar barra de scroll para look nativo */
+.kont-content::-webkit-scrollbar { display: none; }
+
+/* ── CARDS & WIDGETS ── */
+.kont-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--kont-border);
+}
+
+.kont-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.kont-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--kont-dark);
+    margin-top: 4px;
+    line-height: 1.2;
+}
+
+.kont-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+/* Plan Card & Ring */
+.kont-plan-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.kont-plan-info { flex: 1; }
+
+.kont-progress-ring {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+}
+
+.kont-progress-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.ring-bg {
+    fill: none;
+    stroke: #f1f5f9;
+    stroke-width: 8;
+}
+
+.ring-fill {
+    fill: none;
+    stroke: var(--kont-blue);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 251.2;
+    stroke-dashoffset: 251.2;
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kont-progress-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#progress-value { font-size: 24px; font-weight: 900; color: var(--kont-dark); line-height: 1; }
+#progress-unit { font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-top: 2px; }
+
+/* Action Card (Dark Theme) */
+.kont-action-card {
+    background: var(--kont-dark);
+    color: white;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.kont-action-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 150px;
+    height: 150px;
+    background: var(--kont-blue);
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.action-content { position: relative; z-index: 10; }
+
+.action-date-box {
+    width: 55px; height: 55px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+.action-day { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+.action-num { font-size: 20px; font-weight: 900; color: white; line-height: 1; }
+
+.kont-btn-action {
+    width: 100%;
+    padding: 14px;
+    background: var(--kont-green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.kont-btn-action:hover { background: var(--kont-green-dark); transform: translateY(-2px); }
+
+/* Agenda List */
+.kont-agenda-list { display: flex; flex-direction: column; gap: 12px; }
+
+.agenda-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid var(--kont-border);
+}
+
+.agenda-date-sm {
+    width: 40px; height: 40px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; color: var(--kont-dark);
+}
+
+.status-badge {
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+}
+
+.status-ok { background: #dcfce7; color: #166534; }
+.status-wait { background: #fef3c7; color: #b45309; }
+
+/* ── FOOTER ── */
+.kont-footer {
+    position: absolute;
+    bottom: 0; width: 100%;
+    padding: 15px;
+    text-align: center;
+    background: linear-gradient(to top, var(--kont-gray-bg) 60%, transparent);
+    z-index: 30;
+}
+
+.kont-footer p { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; }
+.kont-footer span { color: var(--kont-blue); font-weight: 900; }
