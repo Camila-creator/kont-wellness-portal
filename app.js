@@ -33,8 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// ... (aquí sigue tu función renderWellnessPortal)
-
 function renderWellnessPortal(data) {
     // ── 1. HEADER Y MARCA ──
     document.getElementById('tenant-name').textContent = data.tenant.name;
@@ -116,7 +114,8 @@ function renderWellnessPortal(data) {
                         <p class="text-xs text-slate-400 font-medium mt-1"><i class="bi bi-clock mr-1"></i> ${aptDate.toLocaleTimeString('es-VE', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
                     </div>
                 </div>
-                <button class="kont-btn-action" onclick="confirmAttendance(${data.nextAppointment.id})">
+                <!-- 🔥 FIX DEL BOTÓN INYECTADO AQUÍ 🔥 -->
+                <button id="btn-confirm-${data.nextAppointment.id}" class="kont-btn-action" onclick="confirmarAsistencia(${data.nextAppointment.id})">
                     <i class="bi ${btnIcon} text-lg"></i> ${btnText}
                 </button>
             </div>
@@ -157,10 +156,41 @@ function renderWellnessPortal(data) {
     }
 }
 
-// Interacción del Botón
-window.confirmAttendance = async function(appointmentId) {
-    alert("¡Aquí enviaremos un POST a tu API para marcar la cita como CONFIRMADA!");
-    // await fetch(`${API_BASE_URL}/wellness/confirm`, { method: 'POST', body: JSON.stringify({ id: appointmentId }) });
+async function confirmarAsistencia(appointmentId) {
+  // 1. Sacamos el token de la barra de direcciones del navegador (?t=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('t');
+
+  // 2. Buscamos el botón (con el ID dinámico que ya cuadramos arriba)
+  const btn = document.getElementById(`btn-confirm-${appointmentId}`);
+  btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Confirmando...';
+  btn.disabled = true;
+
+  try {
+    // 3. Enviamos el POST a la API pública
+    const res = await fetch(`https://kont-backend-final.onrender.com/api/wellness/portal/appointments/${appointmentId}/confirm`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      // MAGIA UX: Reemplazamos el botón por un badge verde de éxito
+      btn.outerHTML = `
+        <div style="color: #10b981; font-weight: 700; background: #dcfce7; padding: 10px 15px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="bi bi-check-circle-fill" style="font-size: 1.2rem;"></i> ¡Lista! Cita confirmada.
+        </div>`;
+    } else {
+      alert(data.error || "Ocurrió un error al confirmar.");
+      btn.innerHTML = 'Confirmar Asistencia';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    alert("Error de conexión. Revisa tu internet.");
+    btn.innerHTML = 'Confirmar Asistencia';
+    btn.disabled = false;
+  }
 }
 
 function showError(msg) {
