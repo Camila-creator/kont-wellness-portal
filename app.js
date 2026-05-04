@@ -2,14 +2,10 @@
 // PORTAL WELLNESS JS — PRODUCCIÓN Y DESARROLLO
 // =========================================================
 
-// Usamos tu lógica exacta para detectar el entorno
 const API_BASE = window.ENV_API_BASE || "https://kont-backend-final.onrender.com/api";
-
-// Y creamos la constante específica para este portal
 const PUBLIC_API_URL = `${API_BASE}/public`; 
 
-// ✅ NUEVA FUNCIÓN: Escudo Anti-XSS
-// Convierte etiquetas <script> o <img> en texto inofensivo
+// Escudo Anti-XSS
 function safeHtml(str) {
     const d = document.createElement('div');
     d.textContent = str ?? '';
@@ -26,7 +22,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        // Hacemos el fetch usando tu URL dinámica
         const response = await fetch(`${PUBLIC_API_URL}/wellness/portal/${token}`);
         const result = await response.json();
 
@@ -47,7 +42,6 @@ function renderWellnessPortal(data) {
     document.getElementById('tenant-category').textContent = data.tenant.category;
     document.getElementById('client-name').textContent = data.client.name;
 
-    // Inyectar el color primario de la empresa (Marca Blanca)
     if(data.tenant.brandColor && data.tenant.brandColor.length === 7) {
         document.documentElement.style.setProperty('--kont-dark', data.tenant.brandColor);
     }
@@ -63,7 +57,6 @@ function renderWellnessPortal(data) {
     // ── 2. PLAN Y GRÁFICO ──
     document.getElementById('plan-name').textContent = data.package.name;
     
-    // Tratamiento seguro de fecha (evita el desfase horario)
     const expiry = new Date(data.package.expiryDate);
     expiry.setMinutes(expiry.getMinutes() + expiry.getTimezoneOffset());
     document.getElementById('plan-expiry').textContent = expiry.toLocaleDateString('es-VE', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -95,14 +88,13 @@ function renderWellnessPortal(data) {
         if (circle) circle.style.strokeDashoffset = offset;
     }, 300);
 
-    // ── 3. TARJETA DE ACCIÓN (La Próxima Cita) ──
+    // ── 3. TARJETA DE ACCIÓN ──
     const actionCard = document.getElementById('action-card');
     
     if (data.nextAppointment) {
         const aptDate = new Date(data.nextAppointment.date);
         const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
         
-        // Ajuste inteligente del botón
         let btnIcon = 'bi-calendar-check';
         let btnText = 'Confirmar Asistencia';
         
@@ -110,7 +102,6 @@ function renderWellnessPortal(data) {
             btnText = 'Confirmar Cita';
         }
 
-        // ✅ CORRECCIÓN: safeHtml() envuelve variables de la API
         actionCard.innerHTML = `
             <div class="action-content">
                 <div class="flex items-center gap-4">
@@ -137,11 +128,10 @@ function renderWellnessPortal(data) {
         `;
     }
 
-    // ── 4. CRONOGRAMA / HISTORIAL ──
+    // ── 4. CRONOGRAMA ──
     const agendaList = document.getElementById('agenda-list');
     
     if(data.upcoming.length > 0) {
-        // ✅ CORRECCIÓN: safeHtml() envuelve variables de la API
         agendaList.innerHTML = data.upcoming.map(apt => {
             const date = new Date(apt.date);
             const statusClass = apt.status === 'CONFIRMADA' ? 'status-ok' : 'status-wait';
@@ -163,20 +153,44 @@ function renderWellnessPortal(data) {
     } else {
         agendaList.innerHTML = `<p class="text-xs text-slate-400 font-medium px-2 italic">Sin clases programadas.</p>`;
     }
+
+    // ── 5. BOTÓN DE WHATSAPP (Renovación / Contacto) ──
+    const contactSection = document.getElementById('contact-section');
+    if (contactSection) {
+        // Obtenemos el teléfono (si no existe, puedes probar con uno tuyo de prueba por ahora)
+        const phone = data.tenant.phone || ""; 
+        const clientFirstName = data.client.name.split(" ")[0];
+        const message = encodeURIComponent(`¡Hola! Soy ${clientFirstName}, estoy revisando mi portal de Kont y tengo una consulta sobre mi paquete de ${data.package.name}.`);
+
+        if (phone) {
+            // Limpiamos todo lo que no sea número para el link de WhatsApp
+            const cleanPhone = phone.replace(/[^0-9]/g, '');
+            contactSection.innerHTML = `
+                <a href="https://wa.me/${cleanPhone}?text=${message}" target="_blank" 
+                   class="w-full bg-[#25D366] hover:bg-[#1EBE59] text-white font-extrabold text-[15px] py-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,211,102,0.3)] transition-transform active:scale-95">
+                    <i class="bi bi-whatsapp text-[20px]"></i> Contactar al Estudio
+                </a>
+            `;
+        } else {
+            // Si el backend no devuelve teléfono, mostramos un botón apagado por diseño
+            contactSection.innerHTML = `
+                <button disabled class="w-full bg-slate-200 text-slate-400 font-extrabold text-[15px] py-4 rounded-2xl flex items-center justify-center gap-2">
+                    <i class="bi bi-whatsapp text-[20px]"></i> Contacto no disponible
+                </button>
+            `;
+        }
+    }
 }
 
 async function confirmarAsistencia(appointmentId) {
-  // 1. Sacamos el token de la barra de direcciones del navegador (?t=...)
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('t');
 
-  // 2. Buscamos el botón (con el ID dinámico que ya cuadramos arriba)
   const btn = document.getElementById(`btn-confirm-${appointmentId}`);
   btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Confirmando...';
   btn.disabled = true;
 
   try {
-    // 3. Enviamos el POST a la API pública
     const res = await fetch(`${PUBLIC_API_URL}/wellness/portal/appointments/${appointmentId}/confirm`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -185,7 +199,6 @@ async function confirmarAsistencia(appointmentId) {
     const data = await res.json();
 
     if (data.ok) {
-      // MAGIA UX: Reemplazamos el botón por un badge verde de éxito
       btn.outerHTML = `
         <div style="color: #10b981; font-weight: 700; background: #dcfce7; padding: 10px 15px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px;">
           <i class="bi bi-check-circle-fill" style="font-size: 1.2rem;"></i> ¡Lista! Cita confirmada.
@@ -203,7 +216,6 @@ async function confirmarAsistencia(appointmentId) {
 }
 
 function showError(msg) {
-    // ✅ CORRECCIÓN: safeHtml() envuelve el mensaje de error por si viene del servidor
     document.querySelector('.kont-app').innerHTML = `
         <div class="flex flex-col items-center justify-center min-h-screen p-8 text-center bg-slate-100">
             <div class="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full border border-slate-200">
