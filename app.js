@@ -8,6 +8,14 @@ const API_BASE = window.ENV_API_BASE || "https://kont-backend-final.onrender.com
 // Y creamos la constante específica para este portal
 const PUBLIC_API_URL = `${API_BASE}/public`; 
 
+// ✅ NUEVA FUNCIÓN: Escudo Anti-XSS
+// Convierte etiquetas <script> o <img> en texto inofensivo
+function safeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str ?? '';
+    return d.innerHTML;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('t');
@@ -102,6 +110,7 @@ function renderWellnessPortal(data) {
             btnText = 'Confirmar Cita';
         }
 
+        // ✅ CORRECCIÓN: safeHtml() envuelve variables de la API
         actionCard.innerHTML = `
             <div class="action-content">
                 <div class="flex items-center gap-4">
@@ -110,11 +119,10 @@ function renderWellnessPortal(data) {
                         <span class="action-num">${String(aptDate.getDate()).padStart(2, '0')}</span>
                     </div>
                     <div>
-                        <h3 class="text-[17px] font-bold leading-tight">${data.nextAppointment.service}</h3>
+                        <h3 class="text-[17px] font-bold leading-tight">${safeHtml(data.nextAppointment.service)}</h3>
                         <p class="text-xs text-slate-400 font-medium mt-1"><i class="bi bi-clock mr-1"></i> ${aptDate.toLocaleTimeString('es-VE', { hour: 'numeric', minute: '2-digit', hour12: true })}</p>
                     </div>
                 </div>
-                <!-- 🔥 FIX DEL BOTÓN INYECTADO AQUÍ 🔥 -->
                 <button id="btn-confirm-${data.nextAppointment.id}" class="kont-btn-action" onclick="confirmarAsistencia(${data.nextAppointment.id})">
                     <i class="bi ${btnIcon} text-lg"></i> ${btnText}
                 </button>
@@ -133,6 +141,7 @@ function renderWellnessPortal(data) {
     const agendaList = document.getElementById('agenda-list');
     
     if(data.upcoming.length > 0) {
+        // ✅ CORRECCIÓN: safeHtml() envuelve variables de la API
         agendaList.innerHTML = data.upcoming.map(apt => {
             const date = new Date(apt.date);
             const statusClass = apt.status === 'CONFIRMADA' ? 'status-ok' : 'status-wait';
@@ -142,13 +151,13 @@ function renderWellnessPortal(data) {
                 <div class="flex items-center gap-4">
                     <div class="agenda-date-sm">${date.getDate()}</div>
                     <div>
-                        <p class="font-bold text-slate-800 text-[13px]">${apt.service}</p>
+                        <p class="font-bold text-slate-800 text-[13px]">${safeHtml(apt.service)}</p>
                         <p class="text-[11px] text-slate-500 font-semibold mt-1">
                             ${date.toLocaleDateString('es-VE', { month: 'short' })} • ${date.toLocaleTimeString('es-VE', { hour: 'numeric', minute: '2-digit', hour12: true })}
                         </p>
                     </div>
                 </div>
-                <span class="status-badge ${statusClass}">${apt.status}</span>
+                <span class="status-badge ${statusClass}">${safeHtml(apt.status)}</span>
             </div>`;
         }).join('');
     } else {
@@ -168,7 +177,7 @@ async function confirmarAsistencia(appointmentId) {
 
   try {
     // 3. Enviamos el POST a la API pública
-    const res = await fetch(`https://kont-backend-final.onrender.com/api/wellness/portal/appointments/${appointmentId}/confirm`, {
+    const res = await fetch(`${PUBLIC_API_URL}/wellness/portal/appointments/${appointmentId}/confirm`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: token })
@@ -194,12 +203,13 @@ async function confirmarAsistencia(appointmentId) {
 }
 
 function showError(msg) {
+    // ✅ CORRECCIÓN: safeHtml() envuelve el mensaje de error por si viene del servidor
     document.querySelector('.kont-app').innerHTML = `
         <div class="flex flex-col items-center justify-center min-h-screen p-8 text-center bg-slate-100">
             <div class="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full border border-slate-200">
                 <i class="bi bi-exclamation-triangle-fill text-5xl text-rose-500 mb-4 inline-block drop-shadow-sm"></i>
                 <h2 class="text-xl font-black text-slate-800 mb-2">Acceso Denegado</h2>
-                <p class="text-sm text-slate-500 font-medium">${msg}</p>
+                <p class="text-sm text-slate-500 font-medium">${safeHtml(msg)}</p>
             </div>
         </div>`;
 }
