@@ -53,11 +53,20 @@
 
         <div class="kont-content">
             
+            <div id="billing-banner-container" style="display:none; margin-top: 5px;"></div>
+
             <section class="kont-card kont-plan-card">
                 <div class="kont-plan-info">
                     <h2 class="kont-label">Tu Plan Actual</h2>
                     <p id="plan-name" class="kont-title">Cargando Plan...</p>
                     <div class="kont-badge mt-2">Vence: <span id="plan-expiry">--/--/----</span></div>
+                    
+                    <div id="progress-bar-container" style="margin-top: 15px; display: none;">
+                        <p id="progress-bar-text" style="font-size: 0.75rem; color: #64748b; font-weight: 700; margin-bottom: 5px;"></p>
+                        <div style="height: 6px; background: #f1f5f9; border-radius: 4px; overflow: hidden; width: 100%;">
+                            <div id="progress-bar-fill" style="height: 100%; background: var(--kont-blue); border-radius: 4px; transition: width 0.4s ease; width: 0%;"></div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="kont-progress-ring">
@@ -94,12 +103,18 @@
                     </div>
             </section>
             
-            <section class="mb-6 px-1" id="contact-section">
+            <section class="mb-2 mt-4" id="payments-section" style="display:none;">
+                <h2 class="kont-label mb-3 px-1"><i class="bi bi-wallet2 mr-1"></i> Historial de Pagos</h2>
+                <div id="payments-history" class="kont-agenda-list">
+                    </div>
+            </section>
+
+            <section class="mb-6 mt-4 px-1" id="contact-section">
                 </section>
             
         </div>
 
-        <footer class="kont-footer">
+        <footer class="kont-footer" id="tenant-footer">
             <p>Powered by <span>KONT</span></p>
         </footer>
 
